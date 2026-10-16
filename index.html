@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#0b1020" />
+  <meta name="description" content="PathFinder AI — an interactive A*, Dijkstra, and BFS pathfinding visualizer." />
+  <title>PathFinder AI — Search, Visualized</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="src/styles.css" />
+</head>
+<body>
+  <div class="ambient ambient-one"></div><div class="ambient ambient-two"></div>
+  <div class="app-shell">
+    <header class="topbar">
+      <a class="brand" href="#" aria-label="PathFinder AI home"><span class="brand-mark"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 17.5 9.2 12l3.1 3.1L20 6.5"/><path d="M14.8 6.5H20v5.2"/></svg></span><span>pathfinder<span class="brand-muted">.ai</span></span></a>
+      <div class="topbar-center"><span class="live-dot"></span> INTERACTIVE ALGORITHM LAB</div>
+      <div class="topbar-right">
+        <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme" title="Switch light/dark theme">
+          <svg id="themeIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+          </svg>
+        </button>
+        <button class="icon-button" id="helpBtn" aria-label="Show help" title="How to use">?</button>
+      </div>
+    </header>
+
+    <main>
+      <section class="hero">
+        <div class="eyebrow"><span class="eyebrow-line"></span> SEARCH. EXPLORE. OPTIMIZE.</div>
+        <h1>Find the <span class="gradient-text">best path.</span></h1>
+        <p class="hero-copy">Watch intelligent search algorithms navigate complexity, one node at a time.</p>
+      </section>
+
+      <section class="workspace" aria-label="Pathfinding workspace">
+        <aside class="control-panel panel">
+          <div class="panel-heading"><div><div class="section-kicker">CONFIGURATION</div><h2>Workspace</h2></div><span class="status-pill" id="runStatus"><span class="status-dot"></span> READY</span></div>
+          <div class="control-group">
+            <label for="algorithmSelect">Search algorithm</label>
+            <div class="select-wrap"><select id="algorithmSelect"><option value="astar">A* Search <span>recommended</span></option><option value="dijkstra">Dijkstra's Algorithm</option><option value="bfs">Breadth-First Search</option></select><span class="select-chevron">⌄</span></div>
+            <p class="microcopy" id="algorithmDescription">Balances distance travelled with estimated distance to goal.</p>
+          </div>
+          <div class="control-group">
+            <div class="label-row"><label for="speedRange">Animation speed</label><span class="value-chip" id="speedValue">Fast</span></div>
+            <input type="range" id="speedRange" min="1" max="5" value="4" />
+            <div class="range-labels"><span>Slow</span><span>Fast</span></div>
+          </div>
+          <div class="control-group">
+            <label>Draw on grid</label>
+            <div class="tool-grid" role="group" aria-label="Drawing tool">
+              <button class="tool-button active" data-tool="wall"><span class="tool-swatch wall-swatch"></span><span>Wall</span><kbd>W</kbd></button>
+              <button class="tool-button" data-tool="erase"><span class="tool-swatch erase-swatch"></span><span>Eraser</span><kbd>E</kbd></button>
+              <button class="tool-button" data-tool="start"><span class="tool-swatch start-swatch"></span><span>Start</span><kbd>S</kbd></button>
+              <button class="tool-button" data-tool="goal"><span class="tool-swatch goal-swatch"></span><span>Goal</span><kbd>G</kbd></button>
+            </div>
+            <p class="microcopy">Select a tool, then click or drag across cells.</p>
+          </div>
+          <div class="control-group options-group">
+            <label class="toggle-row" for="diagonalToggle"><span><strong>Diagonal movement</strong><small>Allow corner-to-corner steps</small></span><input id="diagonalToggle" type="checkbox" /><span class="toggle-ui"></span></label>
+            <label class="toggle-row" for="heuristicToggle"><span><strong>Show heuristic values</strong><small>Display h(n) on each cell</small></span><input id="heuristicToggle" type="checkbox" /><span class="toggle-ui"></span></label>
+          </div>
+          <div class="control-actions">
+            <button class="button button-primary" id="startBtn"><span class="play-icon">▶</span> Find shortest path</button>
+            <div class="button-row"><button class="button button-secondary" id="stepBtn">Step <span>→</span></button><button class="button button-secondary" id="pauseBtn" disabled>Pause <span>Ⅱ</span></button><button class="button button-quiet" id="resetBtn">Reset</button></div>
+            <button class="button button-ghost" id="mazeBtn"><span>✳</span> Generate random maze</button>
+          </div>
+          <div class="panel-foot"><span class="keyboard-icon">⌘</span> Tip: use <kbd>Space</kbd> to run and <kbd>R</kbd> to reset.</div>
+        </aside>
+
+        <section class="visual-panel panel">
+          <div class="visual-header"><div><div class="section-kicker">LIVE SIMULATION</div><h2>Pathfinding canvas</h2></div><div class="canvas-meta"><span class="live-dot"></span><span id="gridDimensions">30 × 20 GRID</span></div></div>
+          <div class="canvas-wrap"><div id="grid" class="grid" role="grid" aria-label="Pathfinding grid"></div><div id="canvasOverlay" class="canvas-overlay hidden"><div class="overlay-card"><div class="overlay-spinner"></div><strong>Calculating route</strong><span>Exploring possible paths…</span></div></div></div>
+          <div class="legend"><span><i class="legend-dot start-legend"></i> Start</span><span><i class="legend-dot goal-legend"></i> Goal</span><span><i class="legend-dot wall-legend"></i> Wall</span><span><i class="legend-dot frontier-legend"></i> Frontier</span><span><i class="legend-dot explored-legend"></i> Explored</span><span><i class="legend-dot path-legend"></i> Final path</span></div>
+          <div class="stats-grid">
+            <article class="stat-card"><span class="stat-label">PATH LENGTH</span><div class="stat-value" id="pathLength">— <small>steps</small></div><span class="stat-note">Final route distance</span></article>
+            <article class="stat-card"><span class="stat-label">NODES EXPLORED</span><div class="stat-value" id="nodesExplored">0</div><span class="stat-note">Visited during search</span></article>
+            <article class="stat-card"><span class="stat-label">EXECUTION TIME</span><div class="stat-value" id="executionTime">— <small>ms</small></div><span class="stat-note">Algorithm computation</span></article>
+            <article class="stat-card"><span class="stat-label">PATH COST</span><div class="stat-value" id="pathCost">—</div><span class="stat-note">Total movement cost</span></article>
+          </div>
+          <div class="result-banner" id="resultBanner"><span class="result-icon">↗</span><div><strong>Ready to explore</strong><p>Choose your algorithm and run a search to see it in action.</p></div><span class="result-tag">IDLE</span></div>
+        </section>
+      </section>
+
+      <section class="bottom-grid">
+        <article class="panel formula-panel"><div class="section-kicker">THE LOGIC</div><h2>How A* thinks</h2><p>At every step, A* chooses the cell with the lowest estimated total cost.</p><div class="formula"><span>f(n)</span><b>=</b><span class="formula-g">g(n)</span><b>+</b><span class="formula-h">h(n)</span></div><div class="formula-legend"><span><i class="formula-dot formula-g-bg"></i><b>g(n)</b> Cost so far</span><span><i class="formula-dot formula-h-bg"></i><b>h(n)</b> Estimated cost to goal</span></div></article>
+        <article class="panel comparison-panel"><div class="comparison-head"><div><div class="section-kicker">ALGORITHM INSIGHTS</div><h2>Compare strategies</h2></div><button class="text-button" id="compareBtn">Run comparison ↗</button></div><p class="comparison-copy">Run all three algorithms on the same map and compare their results.</p><div class="comparison-table-wrap"><table><thead><tr><th>Algorithm</th><th>Path cost</th><th>Explored</th><th>Time</th></tr></thead><tbody id="comparisonBody"><tr><td colspan="4" class="empty-table">Run a comparison to populate metrics.</td></tr></tbody></table></div></article>
+      </section>
+      <footer><span>PATHFINDER AI <span class="footer-separator">/</span> ALGORITHM VISUALIZER</span><span>Built to make search visible.</span></footer>
+    </main>
+  </div>
+  <dialog id="helpDialog" class="help-dialog"><form method="dialog"><button class="dialog-close" aria-label="Close">×</button><div class="section-kicker">QUICK GUIDE</div><h2>Make a path your own.</h2><ol><li><b>Place obstacles</b><span>Select Wall and drag on the grid. Use Eraser to remove walls.</span></li><li><b>Choose your endpoints</b><span>Select Start or Goal, then click a cell.</span></li><li><b>Run the search</b><span>Use Find shortest path, or Step to advance one event at a time.</span></li><li><b>Compare algorithms</b><span>Compare A*, Dijkstra, and BFS on the same grid.</span></li></ol><p class="dialog-note">For a fair comparison, BFS assumes every move has equal cost. With diagonal movement enabled, A* and Dijkstra use 1 and √2 movement costs, while BFS still minimizes number of moves, not geometric distance.</p><button class="button button-primary dialog-done">Got it</button></form></dialog>
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  <script type="module" src="src/app.js"></script>
+</body>
+</html>

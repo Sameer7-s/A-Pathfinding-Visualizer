@@ -1,0 +1,11 @@
+{
+  "name": "pathfinder-ai",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Premium interactive A*, Dijkstra, and BFS pathfinding visualizer",
+  "scripts": {
+    "start": "npx --yes serve .",
+    "test": "node --test"
+  }
+}
